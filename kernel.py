@@ -86,5 +86,5 @@ Y_pred = ((np.sign(K_test[:, sv_indices] @ sv_alphas + b) + 1) / 2).astype(int)
 sub = pd.DataFrame(Y_pred).reset_index()
 sub.columns = ['Id', 'Predicted']
 sub['Id'] += 1
-sub.to_csv('submission.csv', index=False)
-print('Saved the predictions in the submission.csv file')
+sub.to_csv('test_pred.csv', index=False)
+print('Saved the predictions in the test_pred.csv file')
