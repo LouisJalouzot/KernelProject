@@ -1,8 +1,6 @@
 import pandas as pd
 import networkx as nx
 import numpy as np
-from tqdm import tqdm
-from copy import deepcopy
 from cvxopt import matrix, solvers
 
 ### Loading the data
@@ -14,7 +12,6 @@ test = pd.read_pickle('test_data.pkl')
 # Weisfeiler-Lehman Subtree Kernel
 def wlsk(X, h=5):
     # First convert all node labels to string instead of lists of one integer
-    X = deepcopy(X)
     n = len(X)
     # Compute the inverse of the size of each graph for normalizing later
     inv_graph_sizes = np.zeros(n)
@@ -26,7 +23,8 @@ def wlsk(X, h=5):
     K = np.zeros((n, n))
     # We know the set of possible node labels in all graphs before the first label propagation
     ind_labels = {str(i): i for i in range(50)}
-    for step in tqdm(range(h)):
+    for step in range(h):
+        print(f"============ Iteration {step} / {h} ===========")
         # Remember the labels created with this propagation 
         new_ind_labels = set()
         # Propagate the labels and compute histograms of node labels
@@ -60,8 +58,8 @@ K_train = K[:n, :n]
 K_test = K[n:, :n]
 
 # Define the parameters of the convex optimization problem for kernel C-SVM
-# Put class weight so that samples with label -1 (10%) have a bigger impact on the learning
-class_weights = np.array([0, 1, 10])
+# Put class weight so that samples with label 1 (10%) have a bigger impact on the learning
+class_weights = np.array([0, 10, 1])
 C = 1e-3
 P = np.outer(labels, labels) * K_train
 w = class_weights[labels]
